@@ -1,31 +1,34 @@
-import subprocess
+import os
+from time import sleep
 from random import randint
 
+from crawler import crawl
+from parser import Parser
+from plot import plot_cdf
+
+
+TEST_IDS = [1362215, 342627, 803442, 1196676, 1334119, 1182801, 998045, 7383908, 990147, 1571183]
 BASE_URL = 'https://vrbo.com'
-rand_id = randint(100000, 10000000)
+BASE_DIR = './crawled_data'
 
-
-def crawl(base_url, route_id):
-
-    command = f"curl --location --request GET '{BASE_URL}/{route_id}' \
-    --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'"
-
-    err_file = open('errors.txt', 'w')
-    out_file = open(f"{rand_id}.html", 'w')
-
-    try:
-        out = subprocess.check_output(command, shell=True, stderr=err_file)
-        out = out.decode('utf-8')
-        out_file.write(out)
-
-    except subprocess.CalledProcessError as exc:
-        print(f"Status: FAILED, code: {exc.returncode}")
-        raise
-    finally:
-        err_file.close()
-        out_file.close()
 
 
 if __name__=='__main__':
-    crawl(BASE_URL, rand_id)
+    for test_id in TEST_IDS:
+        sleep(randint(5,20))
+        crawl(BASE_URL, test_id, BASE_DIR)
+    prices = []
+    for filename in os.listdir(BASE_DIR):
+        print('filename:', filename)
+        if filename.endswith('.html'):
+            with open(BASE_DIR+'/'+filename) as f:
+                parser = Parser(f)
+                ret_val, price = parser.parse()
+                print('ret_val:', ret_val, 'price:', price)
+                if ret_val is True:
+                    prices.append(int(price))
+    print('prices:', prices)
+
+    plot_cdf(prices)
+
 
