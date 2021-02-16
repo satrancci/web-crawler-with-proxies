@@ -3,6 +3,7 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 def plot_cdf(arr):
+    if not arr: return
     arr = sorted(arr)
     mean, std = np.mean(arr), np.std(arr)
     print('mean:', mean, 'std:', std)

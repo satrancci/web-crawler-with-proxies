@@ -5,7 +5,7 @@ def crawl(base_url, route_id, base_dir, proxy):
     command = f"curl --location --request GET '{base_url}/{route_id}' \
     -p -x {proxy} \
     --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'\
-    -b cookies.txt -c cookies.txt"
+    -b --junk-session-cookies cookies.txt -c cookies.txt"
 
     err_file = open('errors.txt', 'a')
     out_file = open(base_dir+f"/{route_id}.html", 'w')
