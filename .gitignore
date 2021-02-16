@@ -1,5 +1,6 @@
 /env
 __pycache__
 /examples
+/crawled_data
 *.pyc
 *.html
