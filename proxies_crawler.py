@@ -1,19 +1,8 @@
 from random import choice
 import requests
 from bs4 import BeautifulSoup
+import threading
 
-'''
-MAPPINGS = {
-    'ip_address': 0,
-    'port:': 1,
-    'country_code': 2,
-    'country:': 3,
-    'proxy_type': 4,
-    'google_bool': 5,
-    'https_bool': 6,
-    'last_checked': 7
-}
-'''
 
 def get_content(tag):
     return tag.contents[0]
@@ -38,9 +27,21 @@ def get_proxies(proxies, proxy_type, n=float('inf')):
     '''
     return list(filter(lambda x: x[4]==proxy_type, proxies))[:min(n,len(proxies))]
 
+def proxies_fetch_parse_write_to_disk():
+        soup = fetch_proxies()
+        print('proxies_fetch_parse_write_disc() got another batch!')
+        proxies = parse_proxy_table(soup)
+        print("A list of proxies passed...")
+        print('Writing the batch to proxies.txt...')
+        try:
+            with open('proxies.txt', 'w') as f:
+                for proxy in proxies:
+                    f.write(",".join(proxy))
+                    f.write('\n')
+            print('The batch of new proxies to proxies.txt written!')
+        except Exception as exc:
+            print(f"proxies_fetch_parse_write_to_disc() FAILED: {exc}")
+            return False
+        return True
 
-if __name__=='__main__':
-    soup = fetch_proxies()
-    rows = parse_proxy_table(soup)
-    #print(rows)
 
