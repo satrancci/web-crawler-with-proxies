@@ -11,7 +11,7 @@ def crawl(base_url, route_id, base_dir, proxy):
     out_file = open(base_dir+f"/{route_id}.html", 'w')
 
     try:
-        out = subprocess.check_output(command, shell=True, stderr=err_file)
+        out = subprocess.check_output(command, shell=True, timeout=10, stderr=err_file)
         out = out.decode('utf-8')
         out_file.write(out)
 
