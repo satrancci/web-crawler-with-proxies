@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 '''
-MAPPINGS: {
+MAPPINGS = {
     'ip_address': 0,
     'port:': 1,
     'country_code': 2,
