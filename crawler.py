@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 def crawl(base_url, route_id, base_dir, api_key):
 
