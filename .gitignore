@@ -7,3 +7,5 @@ __pycache__
 errors.txt
 cookies.txt
 plot.png
+proxies.txt
+.env

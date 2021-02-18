@@ -1,45 +1,66 @@
 import os
-from time import sleep
+
+from parser import Parser
 from random import randint
+from time import sleep, time
 
 from crawler import crawl
-from parser import Parser
 from plot import plot_cdf
 
+from dotenv import load_dotenv
 
-TEST_PROXIES = ['139.162.41.219:8889', '198.50.163.192:3129', '185.189.112.133:3128', '23.227.201.135:3128', '46.21.153.16:3128',
-                '167.172.184.166:38318','185.236.202.205:3128','193.239.86.248:3128', '193.29.104.90:3128', '163.172.93.129:3128']
-TEST_IDS = [1362215, 342627, 803442, 1196676, 1334119, 1182801, 998045, 7383908, 990147, 1571183]
-BASE_URL = 'https://vrbo.com'
+load_dotenv(verbose=True)
+
+try:
+    CRAWLERA_API_KEY = os.getenv("CRAWLERA_API_KEY")
+    print('CRAWLERA_API_KEY successfully loaded.')
+except Exception as exc:
+    print(f"Could not import CRAWLERA_API_KEY: {exc}")
+    raise
+
+
+TEST_IDS = [1334119, 1182801]
+BASE_URL = 'https://www.vrbo.com'
 BASE_DIR = './crawled_data'
 
+MAX_RETRIES_PER_ROUTE = 10
 
+count = 0
+retry_idx = 1
 
-if __name__=='__main__':
-    for test_id in TEST_IDS:
-        rand_proxy_idx = randint(0,9)
-        rand_proxy = TEST_PROXIES[rand_proxy_idx]
-        print(f"Proxy {rand_proxy} selected at index {rand_proxy_idx}")
-        sleep_time = randint(5,20)
-        print(f"Sleeping for {sleep_time} seconds...")
-        sleep(sleep_time)
-        try:
-            crawl(BASE_URL, test_id, BASE_DIR, rand_proxy)
-        except Exception as exc:
-            print(f"error occurred: {exc}. Skipping to next iteration...")
-            continue
-    prices = []
-    for filename in os.listdir(BASE_DIR):
-        print('filename:', filename)
-        if filename.endswith('.html'):
-            with open(BASE_DIR+'/'+filename) as f:
-                parser = Parser(f)
-                ret_val, price = parser.parse()
-                print('ret_val:', ret_val, 'price:', price)
-                if ret_val is True:
-                    prices.append(int(price))
-    print('prices:', prices)
+while count < len(TEST_IDS):
+    
+    test_id = TEST_IDS[count]
+    sleep_time = randint(11,28)
+    print(f"Sleeping for {sleep_time} seconds...")
+    sleep(sleep_time)
+    print(f"(Re)try number: {retry_idx} for Vrbo room ID {test_id}...")
+    try:
+        crawl(BASE_URL, test_id, BASE_DIR, CRAWLERA_API_KEY)
+        count += 1
+        print(f"{count} pages crawled...")
+        retry_idx = 1
+    except Exception as exc:
+        print(f"error occurred: {exc}. Will keep trying...")
+        retry_idx += 1
+        if retry_idx >= MAX_RETRIES_PER_ROUTE:
+            count += 1
+        continue
 
-    plot_cdf(prices)
+# parsing
+print("Parsing data...")
+prices = []
+for filename in os.listdir(BASE_DIR):
+    print('filename:', filename)
+    if filename.endswith('.html'):
+        with open(BASE_DIR+'/'+filename) as f:
+            parser = Parser(f)
+            ret_val, price = parser.parse()
+            print('ret_val:', ret_val, 'price:', price)
+            if ret_val is True:
+                prices.append(int(price))
+print('prices:', prices)
 
-
+# plotting
+print("Saving plot...")
+plot_cdf(prices)
