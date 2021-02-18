@@ -6,7 +6,7 @@ from time import sleep, time
 
 from crawler import crawl
 from plot import plot_cdf
-
+from crawler_hotspot import crawl_with_hotspot_shield, hotspot_connect_random, import_hotspot_codes
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
@@ -19,7 +19,14 @@ except Exception as exc:
     raise
 
 
-TEST_IDS = [1334119, 1182801]
+try:
+    HOTSPOT_CODES = import_hotspot_codes("locations.txt")
+    print("HOTSPOT SHIELD VPN codes successfully loaded!")
+except Exception as exc:
+    print(f"Could not import HOTSPOT SHIELD VPN codes: {exc}")
+    raise
+
+TEST_IDS = [1182801, 1334119]
 BASE_URL = 'https://www.vrbo.com'
 BASE_DIR = './crawled_data'
 
@@ -36,7 +43,9 @@ while count < len(TEST_IDS):
     sleep(sleep_time)
     print(f"(Re)try number: {retry_idx} for Vrbo room ID {test_id}...")
     try:
-        crawl(BASE_URL, test_id, BASE_DIR, CRAWLERA_API_KEY)
+        hotspot_connect_random(HOTSPOT_CODES)
+        crawl_with_hotspot_shield(BASE_URL, test_id, BASE_DIR)
+        #crawl(BASE_URL, test_id, BASE_DIR, CRAWLERA_API_KEY)
         count += 1
         print(f"{count} pages crawled...")
         retry_idx = 1
