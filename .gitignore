@@ -1,7 +1,6 @@
 /env
 __pycache__
 /examples
-/crawled_data
 *.pyc
 *.html
 errors.txt
@@ -10,3 +9,5 @@ plot.png
 proxies.txt
 .env
 /routes_to_crawl
+/crawled_routes
+/fetched_routes
