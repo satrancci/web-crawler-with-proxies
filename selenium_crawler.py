@@ -42,8 +42,9 @@ def extract_valid_routes(soup):
     selected = list(compress(links, bool_indices))
     cleaned = list(map(lambda x: x["href"], selected))
     ready = list(map(lambda x: x.split("?", 1)[0], cleaned))
-    #print('ready:', ready)
-    return ready
+    ready_no_dups = list(set(ready))
+    #print('ready_no_dups:', ready_no_dups)
+    return ready_no_dups
 
 
 ### Arguments from command line ####
