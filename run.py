@@ -21,7 +21,7 @@ except Exception as exc:
 
 '''
 try:
-    HOTSPOT_CODES = import_hotspot_codes("locations.txt")
+    HOTSPOT_CODES = import_hotspot_codes("hotspot_shield_codes.txt")
     print("HOTSPOT SHIELD VPN codes successfully loaded!")
 except Exception as exc:
     print(f"Could not import HOTSPOT SHIELD VPN codes: {exc}")
