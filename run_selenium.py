@@ -53,9 +53,9 @@ def extract_valid_routes(soup):
 
 try:
     HOTSPOT_CODES = import_hotspot_codes("hotspot_shield_codes.txt")
-    print("HOTSPOT SHIELD VPN codes successfully loaded!")
+    print("[run_selenium.py]: HOTSPOT SHIELD VPN codes successfully loaded!")
 except Exception as exc:
-    print(f"Could not import HOTSPOT SHIELD VPN codes: {exc}")
+    print(f"[run_selenium.py]: Could not import HOTSPOT SHIELD VPN codes: {exc}")
     raise
 
 
@@ -63,7 +63,7 @@ except Exception as exc:
 
 try:
     args = sys.argv
-    print(f"[selenium_crawler.py]: Received: {len(args)} arguments")
+    print(f"[run_selenium.py]: Received: {len(args)} arguments")
     if len(args) != 4:
         print(f"[selenium.crawler.py] There must be three required arguments: selenium_crawler.py [locations_txt_file] [max_pages] [dir_to_store]")
         raise ValueError
@@ -72,14 +72,14 @@ try:
         MAX_PAGES = int(args[2])
         BASE_DIR = "./"+args[3]
     except Exception as exc:
-        print(f"[selenium_crawler.py]: Could not import arguments: {exc}")
+        print(f"[run_selenium.py]: Could not import arguments: {exc}")
         raise
 
 except Exception as exc:
-    print(f"[selenium_crawler.py]: Something went wrong: {exc}")
+    print(f"[run_selenium.py]: Something went wrong: {exc}")
     raise
 
-print(f"[selenium_crawler.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
+print(f"[run_selenium.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
 
 
 LOCATIONS = []
@@ -90,10 +90,10 @@ try:
         for line in lines:
             LOCATIONS.append(line.strip())
 except Exception as exc:
-    print(f"[selenium_crawler.py]: Failed to read/parse {LOCATIONS_FILENAME}: {exc}")
+    print(f"[run_selenium.py]: Failed to read/parse {LOCATIONS_FILENAME}: {exc}")
     raise
 
-print(f"[selenium_crawler.py]: {LOCATIONS_FILENAME} successfully imported. Received {len(LOCATIONS)} locations.")
+print(f"[run_selenium.py]: {LOCATIONS_FILENAME} successfully imported. Received {len(LOCATIONS)} locations.")
 
 
 ### Constants ###
