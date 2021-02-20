@@ -3,10 +3,8 @@ __pycache__
 /examples
 *.pyc
 *.html
-errors.txt
+*.png
 cookies.txt
-plot.png
-proxies.txt
 .env
 /routes_to_crawl
 /crawled_routes
