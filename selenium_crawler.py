@@ -53,10 +53,10 @@ try:
     args = sys.argv
     print(f"[selenium_crawler.py]: Received: {len(args)} arguments")
     if len(args) != 4:
-        print(f"[selenium.crawler.py] There must be three required arguments: selenium_crawler.py [city] [max_pages] [dir_to_store]")
+        print(f"[selenium.crawler.py] There must be three required arguments: selenium_crawler.py [locations_txt_file] [max_pages] [dir_to_store]")
         raise ValueError
     try:
-        KEYWORD = args[1]
+        LOCATIONS_FILENAME = args[1]
         MAX_PAGES = int(args[2])
         BASE_DIR = "./"+args[3]
     except Exception as exc:
@@ -67,15 +67,26 @@ except Exception as exc:
     print(f"[selenium_crawler.py]: Something went wrong: {exc}")
     raise
 
-print(f"[selenium_crawler.py]: imported the following arguments: KEYWORD={KEYWORD}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
+print(f"[selenium_crawler.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
 
+
+LOCATIONS = []
+
+try:
+    with open(LOCATIONS_FILENAME, "r") as f:
+        lines = f.readlines()
+        for line in lines:
+            LOCATIONS.append(line.strip())
+except Exception as exc:
+    print(f"[selenium_crawler.py]: Failed to read/parse {LOCATIONS_FILENAME}: {exc}")
+    raise
+
+print(f"[selenium_crawler.py]: {LOCATIONS_FILENAME} successfully imported. Received {len(LOCATIONS)} locations.")
 
 
 ### Constants ###
 
 BASE_URL = "https://www.vrbo.com"
-URL = f"{BASE_URL}/search/keywords:{KEYWORD}/page:"
-
 
 #### XPaths ###
 
@@ -151,33 +162,41 @@ def process_page_num(driver, keyword, url, num, base_dir):
     finally:
         return (driver, next_page_url[1])
 
-def run(url, keyword, max_pages, base_dir, timeout=5):
+def run(base_url, locations, max_pages, base_dir, timeout=5):
 
     driver = None
-
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-extensions")
-
     driver=webdriver.Chrome('/usr/bin/chromedriver', options=options)
 
-    i = 1
-    next_page = True
-    while i < max_pages+1 and next_page:
-        print(f"[RUNNER]: sleeping for {timeout} seconds...")
-        sleep(timeout)
-        try:
-            print(f"[RUNNER]: Trying {URL} with page_num:{i}...")
-            driver, next_page = process_page_num(driver, keyword, url, i, base_dir)
-            if not next_page:
-                print(f"[RUNNER]: Next page does not exist. Exitting...")
+    print(f"[RUNNER]: Chrome driver successfully configured")
+    print(f"[RUNNER]: Iterating over locations...")
+    for location in locations:
+        print(f"[RUNNER]: {location} location selected")
+        url = f"{base_url}/search/keywords:{location}/page:"
+        print(f"[RUNNER]: url: {url}")
+        location_sleep_time = timeout * randint(9,15)
+        print(f"[RUNNER]: Sleeping for {location_sleep_time} seconds...")
+        sleep(location_sleep_time)
+        i = 1
+        next_page = True
+        while i < max_pages+1 and next_page:
+            print(f"[RUNNER]: sleeping for {timeout} seconds...")
+            sleep(timeout)
+            try:
+                print(f"[RUNNER]: Trying {url} with page_num:{i}...")
+                driver, next_page = process_page_num(driver, location, url, i, base_dir)
+                if not next_page:
+                    print(f"[RUNNER]: Next page does not exist. Exitting...")
+                    break
+                print(f"[RUNNER]: {url} with page_num:{i} successfully crawled!")
+                i += 1
+            except Exception as exc:
+                print(f"[RUNNER]: Something went wrong: {url} with i={i}: {exc}")
                 break
-            print(f"[RUNNER]: {URL} with page_num:{i} successfully crawled!")
-            i += 1
-        except Exception as exc:
-            print(f"[RUNNER]: Something went wrong: {URL} with i={i}: {exc}")
-            raise
 
+    print("[RUNNER]: Crawling successfully done!")
     print("[RUNNER]: Quitting the driver...")
     print("[RUNNER]: Sleeping for {timeout} seconds...")
     sleep(timeout)
@@ -186,4 +205,4 @@ def run(url, keyword, max_pages, base_dir, timeout=5):
 
 
 if __name__=='__main__':
-    run(URL, KEYWORD, MAX_PAGES, BASE_DIR)
+    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR)
