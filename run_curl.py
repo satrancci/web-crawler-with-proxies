@@ -62,54 +62,59 @@ global_count = 0
 
 print(f"[run_curl.py]: Beginning the crawling process on {BASE_READ_DIR}...")
 
-try:
-    for filename in os.listdir(BASE_READ_DIR):
-        city = filename.split('_')[0]
-        print(f"[run_curl.py]: Reading {filename}...")
-        retry_idx = 1
-        routes = []
-        try:
-            with open(BASE_READ_DIR+'/'+filename) as f:
-                lines = f.readlines()
-                for line in lines:
-                    routes.append(line.strip())
-            print(f"[run_curl.py]: routes {routes} were successfully imported from {filename}")
-        except Exception as exc:
-            print(f"[run_curl.py]: Something went wrong while reading files from {BASE_READ_DIR}: {exc}")
-            raise
+POLLING_TIME = 120 # check directory every 300 seconds once it is empty (instead of just exiting the program)
 
-        local_count = 0
-
-        while local_count < len(routes):
-            route = routes[local_count]
-            sleep_time = randint(5,10)
-            print(f"[run_curl.py]: Sleeping for {sleep_time} seconds...")
-            sleep(sleep_time)
-            print(f"[run_curl.py]: (Re)try number: {retry_idx} / {MAX_RETRIES_PER_ROUTE} for Vrbo room ID: {route}...")
+while True:
+    print(f"[run_curl.py]: Sleeping for {POLLING_TIME} seconds...")
+    sleep(POLLING_TIME)
+    try:
+        for filename in os.listdir(BASE_READ_DIR):
+            city = filename.split('_')[0]
+            print(f"[run_curl.py]: Reading {filename}...")
+            retry_idx = 1
+            routes = []
             try:
-                crawl(BASE_URL, route, city, BASE_WRITE_DIR, CRAWLERA_API_KEY)
-                global_count += 1
-                print(f"[run_curl.py]: {global_count} pages crawled...")
-                local_count += 1
-                retry_idx = 1
+                with open(BASE_READ_DIR+'/'+filename) as f:
+                    lines = f.readlines()
+                    for line in lines:
+                        routes.append(line.strip())
+                print(f"[run_curl.py]: routes {routes} were successfully imported from {filename}")
             except Exception as exc:
-                print(f"[run_curl.py]: Error occurred while crawling route {route}: {exc}. Will keep trying...")
-                retry_idx += 1
-                if retry_idx >= MAX_RETRIES_PER_ROUTE:
-                    print(f"[run_curl.py]: Limit of {MAX_RETRIES_PER_ROUTE} retries exceeded for route {route}. Trying next route...")
+                print(f"[run_curl.py]: Something went wrong while reading files from {BASE_READ_DIR}: {exc}")
+                raise
+
+            local_count = 0
+
+            while local_count < len(routes):
+                route = routes[local_count]
+                sleep_time = randint(5,10)
+                print(f"[run_curl.py]: Sleeping for {sleep_time} seconds...")
+                sleep(sleep_time)
+                print(f"[run_curl.py]: (Re)try number: {retry_idx} / {MAX_RETRIES_PER_ROUTE} for Vrbo room ID: {route}...")
+                try:
+                    crawl(BASE_URL, route, city, BASE_WRITE_DIR, CRAWLERA_API_KEY)
+                    global_count += 1
+                    print(f"[run_curl.py]: {global_count} pages crawled...")
                     local_count += 1
-                continue
+                    retry_idx = 1
+                except Exception as exc:
+                    print(f"[run_curl.py]: Error occurred while crawling route {route}: {exc}. Will keep trying...")
+                    retry_idx += 1
+                    if retry_idx >= MAX_RETRIES_PER_ROUTE:
+                        print(f"[run_curl.py]: Limit of {MAX_RETRIES_PER_ROUTE} retries exceeded for route {route}. Trying next route...")
+                        local_count += 1
+                    continue
 
-        try:
-            print(f"[run_curl.py]: Moving {filename} from {BASE_READ_DIR} to {BASE_FETCHED_DIR}...")
-            shutil.move(f"{BASE_READ_DIR}/{filename}", f"{BASE_FETCHED_DIR}")
-            print(f"[run_curl.py]: File successfully moved.")
-        except Exception as exc:
-            print(f"[run_curl.py]: Could not move the file: {exc}")
+            try:
+                print(f"[run_curl.py]: Moving {filename} from {BASE_READ_DIR} to {BASE_FETCHED_DIR}...")
+                shutil.move(f"{BASE_READ_DIR}/{filename}", f"{BASE_FETCHED_DIR}")
+                print(f"[run_curl.py]: File successfully moved.")
+            except Exception as exc:
+                print(f"[run_curl.py]: Could not move the file: {exc}")
 
-except Exception as exc:
-    print(f"[run_curl.py]: Something went wrong: {exc}")
-    raise
+    except Exception as exc:
+        print(f"[run_curl.py]: Something went wrong: {exc}")
+        raise
     
     
 print("[run_curl.py]: Crawling completed!")
