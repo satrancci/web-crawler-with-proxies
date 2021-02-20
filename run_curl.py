@@ -1,9 +1,7 @@
 import os
 import shutil
 
-from utils.parser import Parser
 from utils.curl import crawl
-from utils.plot import plot_cdf
 from utils.hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 
 from random import randint
@@ -115,23 +113,3 @@ except Exception as exc:
     
     
 print("[run_curl.py]: Crawling completed!")
-
-'''
-# parsing
-print("Parsing data...")
-prices = []
-for filename in os.listdir(BASE_WRITE_DIR):
-    print('filename:', filename)
-    if filename.endswith('.html'):
-        with open(BASE_WRITE_DIR+'/'+filename) as f:
-            parser = Parser(f)
-            ret_val, price = parser.parse_price()
-            print('ret_val:', ret_val, 'price:', price)
-            if ret_val is True:
-                prices.append(int(price))
-print('prices:', prices)
-
-# plotting
-print("Saving plot...")
-plot_cdf(prices)
-'''
