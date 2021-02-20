@@ -49,7 +49,7 @@ try:
         else:
             print(f"[run_curl.py]: {dir[2:]} already exists.")
 
-except OSError:
+except OSError as exc:
     print(f"[run_curl.py]: Creation of a directory failed: {exc}")
     raise
 
