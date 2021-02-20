@@ -1,6 +1,5 @@
 import os
 from utils.parser import Parser
-from utils.plot import plot_cdf
 
 BASE_READ_DIR = './crawled_routes'
 FILENAME_TO_WRITE = 'parsed_data.txt'
@@ -18,7 +17,7 @@ def run_parsing(dir_to_parse, filename_to_write):
                     parser = Parser(f_read)
                     ret_val, price = parser.parse_price()
                     if ret_val is True:
-                        f_write.write(f"{city}, {price}")
+                        f_write.write(f"{city},{price}")
                         f_write.write('\n')
 
 if __name__== '__main__':
