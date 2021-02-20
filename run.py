@@ -7,7 +7,7 @@ from time import sleep, time
 
 from crawler import crawl
 from plot import plot_cdf
-from crawler_hotspot import crawl_with_hotspot_shield, hotspot_connect_random, import_hotspot_codes
+from crawler_hotspot import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
