@@ -10,7 +10,7 @@ from itertools import compress
 from time import sleep, time
 from random import randint
 
-from hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
+from utils.hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 
 
 ### util functions ###

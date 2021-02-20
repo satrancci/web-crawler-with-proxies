@@ -1,16 +1,18 @@
 import os
 import shutil
 
-from parser import Parser
+from utils.parser import Parser
+from utils.curl import crawl
+from utils.plot import plot_cdf
+from utils.hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
+
 from random import randint
 from time import sleep, time
 
-from crawler import crawl
-from plot import plot_cdf
-from hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
+
 
 try:
     CRAWLERA_API_KEY = os.getenv("CRAWLERA_API_KEY")
