@@ -10,7 +10,7 @@ from itertools import compress
 from time import sleep, time
 from random import randint
 
-from crawler_hotspot import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
+from hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 
 
 ### util functions ###
@@ -193,16 +193,17 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
 
         while not proxy_connected:
             try:
+                print("[RUNNER]: Disconnecting from the current proxy location...")
+                hotspot_disconnect()
                 print("[RUNNER]: Trying to connect to a new proxy location...")
-                print(f"[RUNNER]: Sleeping for {timeout} seconds...")
-                sleep(timeout)
                 hotspot_connect_random(hotspot_codes)
                 proxy_connected = True
             except Exception as exc:
                 print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
                 continue
-
-        location_sleep_time = timeout * randint(9,15)
+                
+        print("[RUNNER]: Successfully connected to a new proxy location")
+        location_sleep_time = timeout * randint(5,8)
         print(f"[RUNNER]: Sleeping for {location_sleep_time} seconds...")
         sleep(location_sleep_time)
         i = 1
