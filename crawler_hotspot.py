@@ -11,7 +11,7 @@ def import_hotspot_codes(filename):
         lines = f.readlines()
         for line in lines:
             codes.append(line.strip())
-    print('codes:', codes)
+    #print('codes:', codes)
     return codes
 
 
