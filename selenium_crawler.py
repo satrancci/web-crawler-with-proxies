@@ -10,6 +10,8 @@ from itertools import compress
 from time import sleep, time
 from random import randint
 
+from crawler_hotspot import crawl_with_hotspot_shield, hotspot_connect_random, import_hotspot_codes
+
 
 ### util functions ###
 
@@ -45,6 +47,16 @@ def extract_valid_routes(soup):
     ready_no_dups = list(set(ready))
     #print('ready_no_dups:', ready_no_dups)
     return ready_no_dups
+
+
+### Imports
+
+try:
+    HOTSPOT_CODES = import_hotspot_codes("hotspot_shield_codes.txt")
+    print("HOTSPOT SHIELD VPN codes successfully loaded!")
+except Exception as exc:
+    print(f"Could not import HOTSPOT SHIELD VPN codes: {exc}")
+    raise
 
 
 ### Arguments from command line ####
@@ -162,7 +174,7 @@ def process_page_num(driver, keyword, url, num, base_dir):
     finally:
         return (driver, next_page_url[1])
 
-def run(base_url, locations, max_pages, base_dir, timeout=5):
+def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
 
     driver = None
     options = webdriver.ChromeOptions()
@@ -176,6 +188,20 @@ def run(base_url, locations, max_pages, base_dir, timeout=5):
         print(f"[RUNNER]: {location} location selected")
         url = f"{base_url}/search/keywords:{location}/page:"
         print(f"[RUNNER]: url: {url}")
+
+        proxy_connected = False
+
+        while not proxy_connected:
+            try:
+                print("[RUNNER]: Trying to connect to a new proxy location...")
+                print(f"[RUNNER]: Sleeping for {timeout} seconds...")
+                sleep(timeout)
+                hotspot_connect_random(hotspot_codes)
+                proxy_connected = True
+            except Exception as exc:
+                print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
+                continue
+
         location_sleep_time = timeout * randint(9,15)
         print(f"[RUNNER]: Sleeping for {location_sleep_time} seconds...")
         sleep(location_sleep_time)
@@ -205,4 +231,4 @@ def run(base_url, locations, max_pages, base_dir, timeout=5):
 
 
 if __name__=='__main__':
-    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR)
+    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR, HOTSPOT_CODES)
