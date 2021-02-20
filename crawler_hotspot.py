@@ -88,5 +88,5 @@ def crawl_with_hotspot_shield(base_url, route_id, base_dir):
 
 
 if __name__=='__main__':
-    codes = import_hotspot_codes("locations.txt")
+    codes = import_hotspot_codes("hotspot_shield_codes.txt")
     hotspot_connect_random(codes)
