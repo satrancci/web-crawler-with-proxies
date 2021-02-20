@@ -1,6 +1,5 @@
 import os
 from utils.parser import Parser
-from utils.plot import plot_cdf
 
 BASE_READ_DIR = './crawled_routes'
 FILENAME_TO_WRITE = 'parsed_data.txt'
