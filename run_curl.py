@@ -62,7 +62,7 @@ global_count = 0
 
 print(f"[run_curl.py]: Beginning the crawling process on {BASE_READ_DIR}...")
 
-POLLING_TIME = 120 # check directory every 300 seconds once it is empty (instead of just exiting the program)
+POLLING_TIME = 120 # check directory every N seconds once it is empty (instead of just exiting the program)
 
 while True:
     print(f"[run_curl.py]: Sleeping for {POLLING_TIME} seconds...")
