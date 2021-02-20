@@ -89,10 +89,10 @@ if __name__=='__main__':
     codes = import_hotspot_codes("hotspot_shield_codes.txt")
     '''
     while True: # manual testing
-        print("[crawler_hotspot.py]: sleeping for 5 seconds...")
+        print("[hotspot_shield_utils.py]: sleeping for 5 seconds...")
         sleep(5)
         disc_ret = hotspot_disconnect()
-        print(f"[crawler_hotspot.py]: disconnect returned: {disc_ret}")
+        print(f"[hotspot_shield_utils.py]: disconnect returned: {disc_ret}")
         conn_ret = hotspot_connect_random(codes)
-        print(f"[crawler_hotspot.py]: connect returned: {conn_ret}")
+        print(f"[hotspot_shield_utils.py]: connect returned: {conn_ret}")
     '''
