@@ -123,7 +123,7 @@ for filename in os.listdir(BASE_WRITE_DIR):
     if filename.endswith('.html'):
         with open(BASE_WRITE_DIR+'/'+filename) as f:
             parser = Parser(f)
-            ret_val, price = parser.parse()
+            ret_val, price = parser.parse_price()
             print('ret_val:', ret_val, 'price:', price)
             if ret_val is True:
                 prices.append(int(price))
