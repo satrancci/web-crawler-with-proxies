@@ -1,9 +1,7 @@
 import os
 import shutil
 
-from utils.parser import Parser
 from utils.curl import crawl
-from utils.plot import plot_cdf
 from utils.hotspot_shield_utils import import_hotspot_codes, hotspot_disconnect, hotspot_connect_random
 
 from random import randint
