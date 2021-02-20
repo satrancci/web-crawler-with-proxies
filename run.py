@@ -53,7 +53,7 @@ except OSError:
     print(f"[run.py]: Creation of a directory failed: {exc}")
     raise
 
-MAX_RETRIES_PER_ROUTE = 3
+MAX_RETRIES_PER_ROUTE = 5
 
 
 ### global count of successfully crawled pages ###
