@@ -13,8 +13,11 @@ load_dotenv(verbose=True)
 
 
 try:
-    CRAWLERA_API_KEY = os.getenv("CRAWLERA_API_KEY")
-    print('[run_curl.py]: CRAWLERA_API_KEY successfully loaded.')
+    CRAWLERA_API_KEY = os.getenv("CRAWLERA_API_KEY", None)
+    if CRAWLERA_API_KEY is None:
+        print("[run_curl.py]: CRAWLERA_API_KEY does not exist. Proceeding without it...")
+    else:
+        print('[run_curl.py]: CRAWLERA_API_KEY successfully loaded.')
 except Exception as exc:
     print(f"[run_curl.py]: Could not import CRAWLERA_API_KEY: {exc}")
     raise

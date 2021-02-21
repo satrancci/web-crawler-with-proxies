@@ -6,11 +6,16 @@ def crawl(base_url, route_id, city, base_dir, api_key):
     route_id includes '/'
     '''
 
-    command = f"curl '{base_url}{route_id}' \
-    -U {api_key}: \
-    -vx https://proxy.crawlera.com:8013 \
-    --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'\
-    -b --junk-session-cookies cookies.txt -c cookies.txt"
+    if api_key is None:
+        command = f"curl '{base_url}{route_id}' \
+        --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'\
+        -b --junk-session-cookies cookies.txt -c cookies.txt"
+    else:
+        command = f"curl '{base_url}{route_id}' \
+        -U {api_key}: \
+        -vx https://proxy.crawlera.com:8013 \
+        --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'\
+        -b --junk-session-cookies cookies.txt -c cookies.txt"
 
     err_file = open(f"{base_dir}/{route_id}_{city}_logs.txt", 'w')
     out_file = open(base_dir+f"/{route_id}_{city}.html", 'w')
