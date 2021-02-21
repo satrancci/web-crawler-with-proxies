@@ -12,7 +12,7 @@ def plot_single_cdf(city, prices):
     mean, std = np.mean(prices), np.std(prices)
     cdf = norm.cdf(prices, mean, std)
     plt.clf()
-    plt.plot(prices,cdf,label=f"{city} (n={len(prices)})")
+    plt.plot(prices,cdf,label=f"{city} (n={len(prices)},mean=${round(mean)},std=\${round(std)})")
     plt.xlabel("Prices")
     plt.ylabel("Probability")
     plt.title("CDF for continuous distribution")
@@ -34,7 +34,7 @@ def plot_multiple_cdf(cities_to_prices):
         prices = sorted(prices)
         mean, std = np.mean(prices), np.std(prices)
         cdf = norm.cdf(prices, mean, std)
-        plt.plot(prices,cdf,label=f"{city} (n={len(prices)})")
+        plt.plot(prices,cdf,label=f"{city} (n={len(prices)},mean=${round(mean)},std=\${round(std)})")
         plt.legend()
 
 
