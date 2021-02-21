@@ -26,6 +26,7 @@ def plot_multiple_cdf(cities_to_prices):
     cities_to_prices: defaultdict(list) with CITY as key and PRICES as value.
     '''
     N = sum(map(lambda x: len(x), cities_to_prices.values()))
+    cities_to_prices = dict(sorted(cities_to_prices.items(), key=lambda item: np.mean(item[1]), reverse=True)) # display in sorted order
     plt.xlabel("Prices")
     plt.ylabel("Probability")
     plt.title(f"CDF for continuous distribution (N={N})")
