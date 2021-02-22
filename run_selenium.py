@@ -184,7 +184,7 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, vpn_boolean, ti
 
     driver = None
     options = webdriver.ChromeOptions()
-    #options.add_argument("--headless")
+    options.add_argument("--headless")
     options.add_argument("--disable-extensions")
     driver=webdriver.Chrome('/usr/bin/chromedriver', options=options)
 
