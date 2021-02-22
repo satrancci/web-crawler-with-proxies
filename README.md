@@ -1,14 +1,14 @@
 # Table of Contents
--[Intro](#intro)
--[Proxies](#proxies)
-  - [Crawlera](#crawlera)
-  - [Hotspot Shield VPN](#hotspot-shield-vpn)
--[Usage](#usage)
--[Installation](#installation)
- - [Linux](#linux)
- - [Mac OS](#mac-os)
--[Limitations](#limitations)
--[License](#license)
+**[Intro](#intro)**<br>
+**[Proxies](#proxies)**<br>
+    -**[Crawlera](#crawlera)**<br>
+    -**[Hotspot Shield VPN](#hotspot-shield-vpn)**<br>
+**[Usage](#usage)**<br>
+**[Installation](#installation)**<br>
+    -**[Linux](#linux)**<br>
+    -**[Mac OS](#mac-os)**<br>
+**[Limitations](#limitations)**<br>
+**[License](#license)**<br>
 
 
 
@@ -39,7 +39,7 @@ The API key is loaded from the `.env` file.
 
 ### Hotspot Shield VPN
 
-[Hotspot Shield VPN](https://www.hotspotshield.com/) is one of the largest VPN services. I have been using it for years as a GUI application. However, recently they released a CLI version for Linux, which I tested in this project and so far it has been working splendidly. It can also be called from a Python script. The util functions can be found in [`/utils/hotspot_shield_utils.py`](https://github.com/satrancci/vrbo-crawler/blob/main/utils/hotspot_shield_utils.py). They rely on Python's `subprocess` module. The list of available locations can be found in [`./hotspot_shield_codes.txt`](https://github.com/satrancci/vrbo-crawler/blob/main/hotspot_shield_codes.txt) or by [installing](https://www.hotspotshield.com/vpn/vpn-for-linux/) the Hotspot Shield VPN for Linux, signing in with `hotspotshield account signin` and calling `hotspotshield locations`. Example usage in a Selenium [script](https://github.com/satrancci/vrbo-crawler/blob/main/run_selenium.py#L192-L203):
+[Hotspot Shield VPN](https://www.hotspotshield.com/) is one of the largest VPN services. I have been using it for years as a GUI application. However, recently they released a CLI version for Linux, which I tested in this project and so far it has been working splendidly. It can also be called from a Python script. The util functions can be found in [`/utils/hotspot_shield_utils.py`](https://github.com/satrancci/vrbo-crawler/blob/main/utils/hotspot_shield_utils.py). They rely on Python's `subprocess` module. The list of available locations can be found in [`./hotspot_shield_codes.txt`](https://github.com/satrancci/vrbo-crawler/blob/main/hotspot_shield_codes.txt) or by [installing](https://www.hotspotshield.com/vpn/vpn-for-linux/) the Hotspot Shield VPN for Linux, signing in with `hotspotshield account signin` and calling `hotspotshield locations`. Example usage in a Selenium [script](https://github.com/satrancci/vrbo-crawler/blob/739c80ae1b722eb130f8f33955f1fb1b9d63687a/run_selenium.py#L226-L235):
 
         proxy_connected = False
 
@@ -98,7 +98,7 @@ You can double check whether you are indeed connected by running `curl ipinfo.io
 
 # Usage
 
-After [installation](#installation), the only thing that you need to do is just to add as many cities/locations that you want to crawl to `locations_crawl.txt` (one per row) and you are almost good to go. The flow is as follows:
+After [installation](#installation), the only thing that you need to do is just to add as many cities/locations that you want to crawl to `locations_to_crawl.txt` (one per row) and you are almost good to go. The flow is as follows:
 
 `python3 run_selenium.py <locations_to_crawl> <MAX_PAGES> <routes_to_crawl> <vpn-usage-boolean [0 | 1]>`
 
@@ -127,7 +127,7 @@ For example,
 
 will take a list of locations from `locations_to_crawl.txt` and for each location will crawl 20 pages (if they are, of course, available). Valid routes will be further stored in their respective txt file in `/routes_to_crawl` directory. For example, `miami_1.txt` would store valid routes for page_num=1 for Miami, etc.
 
-`python3 run_curl.py` can be run in parallel with the selenium script. The former polls `ready_to_crawl directory` every N seconds (120 seconds by default), iterates over the available files and calls `curl` on each route. If you are a Crawlera member, store your API key in the `.env` file as
+`python3 run_curl.py` can be run in parallel with the selenium script. The former polls `ready_to_crawl` directory every N seconds (120 seconds by default), iterates over the available files and calls `curl` on each route. If you are a Crawlera member, store your API key in the `.env` file as
 `CRAWLERA_API_KEY=<YOUR_KEY>`. It will be automatically loaded into the `run_curl.py` script. If the API key is not stored in the `.env` file, the program will gracefully continue, calling the `curl` command without a proxy:
 
     if api_key is None:
