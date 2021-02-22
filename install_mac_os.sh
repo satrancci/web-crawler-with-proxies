@@ -28,6 +28,9 @@ bash install.sh
 ##### Update stored Certificate Authority files ######
 # sudo update-ca-certificates
 
+##### Add Crawlera API key (first you need to create an account with them; they offer a 14-day free trial) ######
+##### Open .env and save:
+# CRAWLERA_API_KEY=<YOUR_KEY> 
 
 
 
