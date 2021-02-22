@@ -64,23 +64,26 @@ except Exception as exc:
 try:
     args = sys.argv
     print(f"[run_selenium.py]: Received: {len(args)} arguments")
-    if len(args) != 4:
-        print(f"[selenium.crawler.py] There must be three required arguments: selenium_crawler.py [locations_txt_file] [max_pages] [dir_to_store]")
+    if len(args) != 5:
+        print(f"[selenium.crawler.py] There must be four required arguments: selenium_crawler.py <locations_txt_file> <max_pages> <dir_to_store> <vpn-usage-boolean: [1 | 0]>")
         raise ValueError
     try:
         LOCATIONS_FILENAME = args[1]
         MAX_PAGES = int(args[2])
         BASE_DIR = "./"+args[3]
+        VPN_BOOLEAN = int(args[4])
     except Exception as exc:
-        print(f"[run_selenium.py]: Could not import arguments: {exc}")
+        print(f" \
+        [run_selenium.py]: Could not import arguments: {exc}\n \
+        There must be four required arguments: selenium_crawler.py <locations_txt_file> <max_pages> <dir_to_store> <vpn-usage-boolean: [1 | 0]> \
+        ")
         raise
 
 except Exception as exc:
     print(f"[run_selenium.py]: Something went wrong: {exc}")
     raise
 
-print(f"[run_selenium.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
-
+print(f"[run_selenium.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}, VPN_BOOLEAN:{VPN_BOOLEAN}")
 
 LOCATIONS = []
 
@@ -177,7 +180,7 @@ def process_page_num(driver, keyword, url, num, base_dir):
     finally:
         return (driver, next_page_url[1])
 
-def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
+def run(base_url, locations, max_pages, base_dir, hotspot_codes, vpn_boolean, timeout=5):
 
     driver = None
     options = webdriver.ChromeOptions()
@@ -192,20 +195,23 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
         url = f"{base_url}/search/keywords:{location}/page:"
         print(f"[RUNNER]: url: {url}")
 
-        proxy_connected = False
+        if vpn_boolean:
+            
+            proxy_connected = False
 
-        while not proxy_connected:
-            try:
-                print("[RUNNER]: Disconnecting from the current proxy location...")
-                hotspot_disconnect()
-                print("[RUNNER]: Trying to connect to a new proxy location...")
-                hotspot_connect_random(hotspot_codes)
-                proxy_connected = True
-            except Exception as exc:
-                print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
-                continue
-                
-        print("[RUNNER]: Successfully connected to a new proxy location")
+            while not proxy_connected:
+                try:
+                    print("[RUNNER]: Disconnecting from the current proxy location...")
+                    hotspot_disconnect()
+                    print("[RUNNER]: Trying to connect to a new proxy location...")
+                    hotspot_connect_random(hotspot_codes)
+                    proxy_connected = True
+                except Exception as exc:
+                    print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
+                    continue
+                    
+            print("[RUNNER]: Successfully connected to a new proxy location")
+
         location_sleep_time = timeout * randint(5,8)
         print(f"[RUNNER]: Sleeping for {location_sleep_time} seconds...")
         sleep(location_sleep_time)
@@ -228,11 +234,11 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
 
     print("[RUNNER]: Crawling successfully done!")
     print("[RUNNER]: Quitting the driver...")
-    print("[RUNNER]: Sleeping for {timeout} seconds...")
+    print(f"[RUNNER]: Sleeping for {timeout} seconds...")
     sleep(timeout)
     driver.quit()
 
 
 
 if __name__=='__main__':
-    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR, HOTSPOT_CODES)
+    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR, HOTSPOT_CODES, VPN_BOOLEAN)
