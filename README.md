@@ -1,14 +1,14 @@
-# Table of Contents
--[Intro](#intro)
--[Proxies](#proxies)
-  - [Crawlera](#crawlera)
-  - [Hotspot Shield VPN](#hotspot-shield-vpn)
--[Usage](#usage)
--[Installation](#installation)
- - [Linux](#linux)
- - [Mac OS](#mac-os)
--[Limitations](#limitations)
--[License](#license)
+### Table of Contents
+**[Intro](#intro)**<br>
+**[Proxies](#proxies)**<br>
+    -**[Crawlera](#crawlera)**<br>
+    -**[Hotspot Shield VPN](#hotspot-shield-vpn)**<br>
+**[Usage](#usage)**<br>
+**[Installation](#installation)**<br>
+    -**[Linux](#linux)**<br>
+    -**[Mac OS](#mac-os)**<br>
+**[Limitations](#limitations)**<br>
+**[License](#license)**<br>
 
 
 
