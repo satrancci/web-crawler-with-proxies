@@ -4,6 +4,7 @@ __pycache__
 *.pyc
 *.html
 *.png
+!/plots/all_cities_cdf_plot.png
 cookies.txt
 .env
 /routes_to_crawl
