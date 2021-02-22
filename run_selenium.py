@@ -122,23 +122,26 @@ def process_page_num(driver, keyword, url, num, base_dir):
     print(f"[SELENIUM_CRAWLER]: Sleeping for {timeout//4} seconds...")
     sleep(timeout//4)
     try:
-        print(f"[SELENIUM_CRAWLER]: Waiting for HitCollection class_name to load for {timeout} seconds, unless it loads sonner...") # make the string dynamic later
-        WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "HitCollection")) # perhaps, this is not needed
-        )
-
         try:
             print(f"[SELENIUM_CRAWLER]: Sleeping for {timeout//2} seconds...")
             sleep(timeout//2)
-            start = time()
-            time_limit_to_scroll_to_bottom = max(timeout, 20)
-            while time()-start < time_limit_to_scroll_to_bottom:
-                print("[SELENIUM_CRAWLER]: Scrolling by 400 pixels down")
-                driver.execute_script("window.scrollBy(0, 400);")
-                print(f"[SELENIUM_CRAWLER]: Sleeping for {max(2, timeout/10)} seconds")
-                sleep(timeout//5)
-                time_left_to_scroll_down = round(time_limit_to_scroll_to_bottom-(time()-start),2)
-                print(f"[SELENIUM_CRAWLER]: {time_left_to_scroll_down} seconds left to scroll down...")
+
+            SCROLL_SLEEP_TIME = randint(2,4)
+            SCROLL_PIXELS_DOWN = 400
+
+            while True:
+                last_height = driver.execute_script("return document.body.scrollHeight")
+                print(f"[SELENIUM_CRAWLER]: Scrolling by {SCROLL_PIXELS_DOWN} pixels down")
+                driver.execute_script(f"window.scrollBy(0, {SCROLL_PIXELS_DOWN});")
+
+                print(f"[SELENIUM_CRAWLER]: Sleeping for {SCROLL_SLEEP_TIME} seconds...")
+                sleep(SCROLL_SLEEP_TIME)
+
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    break
+                last_height = new_height
+
         except Exception as exc:
             print("[SELENIUM_CRAWLER]: Could not scroll down...")
             raise
@@ -178,7 +181,7 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
 
     driver = None
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
+    #options.add_argument("--headless")
     options.add_argument("--disable-extensions")
     driver=webdriver.Chrome('/usr/bin/chromedriver', options=options)
 
