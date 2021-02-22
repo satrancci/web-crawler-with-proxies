@@ -98,7 +98,7 @@ You can double check whether you are indeed connected by running `curl ipinfo.io
 
 # Usage
 
-After [installation](#installation), the only thing that you need to do is just to add as many cities/locations that you want to crawl to `locations_crawl.txt` (one per row) and you are almost good to go. The flow is as follows:
+After [installation](#installation), the only thing that you need to do is just to add as many cities/locations that you want to crawl to `locations_to_crawl.txt` (one per row) and you are almost good to go. The flow is as follows:
 
 `python3 run_selenium.py <locations_to_crawl> <MAX_PAGES> <routes_to_crawl> <vpn-usage-boolean [0 | 1]>`
 
