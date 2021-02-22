@@ -127,7 +127,7 @@ For example,
 
 will take a list of locations from `locations_to_crawl.txt` and for each location will crawl 20 pages (if they are, of course, available). Valid routes will be further stored in their respective txt file in `/routes_to_crawl` directory. For example, `miami_1.txt` would store valid routes for page_num=1 for Miami, etc.
 
-`python3 run_curl.py` can be run in parallel with the selenium script. The former polls `ready_to_crawl directory` every N seconds (120 seconds by default), iterates over the available files and calls `curl` on each route. If you are a Crawlera member, store your API key in the `.env` file as
+`python3 run_curl.py` can be run in parallel with the selenium script. The former polls `ready_to_crawl` directory every N seconds (120 seconds by default), iterates over the available files and calls `curl` on each route. If you are a Crawlera member, store your API key in the `.env` file as
 `CRAWLERA_API_KEY=<YOUR_KEY>`. It will be automatically loaded into the `run_curl.py` script. If the API key is not stored in the `.env` file, the program will gracefully continue, calling the `curl` command without a proxy:
 
     if api_key is None:
