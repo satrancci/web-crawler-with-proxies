@@ -1,3 +1,27 @@
+'''
+Copyright (c) 2021 Alex Ipatov
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'''
+
+
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -64,23 +88,26 @@ except Exception as exc:
 try:
     args = sys.argv
     print(f"[run_selenium.py]: Received: {len(args)} arguments")
-    if len(args) != 4:
-        print(f"[selenium.crawler.py] There must be three required arguments: selenium_crawler.py [locations_txt_file] [max_pages] [dir_to_store]")
+    if len(args) != 5:
+        print(f"[selenium.crawler.py] There must be four required arguments: selenium_crawler.py <locations_txt_file> <max_pages> <dir_to_store> <vpn-usage-boolean: [1 | 0]>")
         raise ValueError
     try:
         LOCATIONS_FILENAME = args[1]
         MAX_PAGES = int(args[2])
         BASE_DIR = "./"+args[3]
+        VPN_BOOLEAN = int(args[4])
     except Exception as exc:
-        print(f"[run_selenium.py]: Could not import arguments: {exc}")
+        print(f" \
+        [run_selenium.py]: Could not import arguments: {exc}\n \
+        There must be four required arguments: selenium_crawler.py <locations_txt_file> <max_pages> <dir_to_store> <vpn-usage-boolean: [1 | 0]> \
+        ")
         raise
 
 except Exception as exc:
     print(f"[run_selenium.py]: Something went wrong: {exc}")
     raise
 
-print(f"[run_selenium.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}")
-
+print(f"[run_selenium.py]: imported the following arguments: LOCATIONS_FILENAME={LOCATIONS_FILENAME}, MAX_PAGES={MAX_PAGES}, BASE_DIR={BASE_DIR}, VPN_BOOLEAN:{VPN_BOOLEAN}")
 
 LOCATIONS = []
 
@@ -122,23 +149,26 @@ def process_page_num(driver, keyword, url, num, base_dir):
     print(f"[SELENIUM_CRAWLER]: Sleeping for {timeout//4} seconds...")
     sleep(timeout//4)
     try:
-        print(f"[SELENIUM_CRAWLER]: Waiting for HitCollection class_name to load for {timeout} seconds, unless it loads sonner...") # make the string dynamic later
-        WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "HitCollection")) # perhaps, this is not needed
-        )
-
         try:
             print(f"[SELENIUM_CRAWLER]: Sleeping for {timeout//2} seconds...")
             sleep(timeout//2)
-            start = time()
-            time_limit_to_scroll_to_bottom = max(timeout, 20)
-            while time()-start < time_limit_to_scroll_to_bottom:
-                print("[SELENIUM_CRAWLER]: Scrolling by 400 pixels down")
-                driver.execute_script("window.scrollBy(0, 400);")
-                print(f"[SELENIUM_CRAWLER]: Sleeping for {max(2, timeout/10)} seconds")
-                sleep(timeout//5)
-                time_left_to_scroll_down = round(time_limit_to_scroll_to_bottom-(time()-start),2)
-                print(f"[SELENIUM_CRAWLER]: {time_left_to_scroll_down} seconds left to scroll down...")
+
+            SCROLL_SLEEP_TIME = randint(2,4)
+            SCROLL_PIXELS_DOWN = 400
+
+            while True:
+                last_height = driver.execute_script("return document.body.scrollHeight")
+                print(f"[SELENIUM_CRAWLER]: Scrolling by {SCROLL_PIXELS_DOWN} pixels down")
+                driver.execute_script(f"window.scrollBy(0, {SCROLL_PIXELS_DOWN});")
+
+                print(f"[SELENIUM_CRAWLER]: Sleeping for {SCROLL_SLEEP_TIME} seconds...")
+                sleep(SCROLL_SLEEP_TIME)
+
+                new_height = driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    break
+                last_height = new_height
+
         except Exception as exc:
             print("[SELENIUM_CRAWLER]: Could not scroll down...")
             raise
@@ -174,7 +204,7 @@ def process_page_num(driver, keyword, url, num, base_dir):
     finally:
         return (driver, next_page_url[1])
 
-def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
+def run(base_url, locations, max_pages, base_dir, hotspot_codes, vpn_boolean, timeout=5):
 
     driver = None
     options = webdriver.ChromeOptions()
@@ -189,20 +219,23 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
         url = f"{base_url}/search/keywords:{location}/page:"
         print(f"[RUNNER]: url: {url}")
 
-        proxy_connected = False
+        if vpn_boolean:
+            
+            proxy_connected = False
 
-        while not proxy_connected:
-            try:
-                print("[RUNNER]: Disconnecting from the current proxy location...")
-                hotspot_disconnect()
-                print("[RUNNER]: Trying to connect to a new proxy location...")
-                hotspot_connect_random(hotspot_codes)
-                proxy_connected = True
-            except Exception as exc:
-                print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
-                continue
-                
-        print("[RUNNER]: Successfully connected to a new proxy location")
+            while not proxy_connected:
+                try:
+                    print("[RUNNER]: Disconnecting from the current proxy location...")
+                    hotspot_disconnect()
+                    print("[RUNNER]: Trying to connect to a new proxy location...")
+                    hotspot_connect_random(hotspot_codes)
+                    proxy_connected = True
+                except Exception as exc:
+                    print(f"[RUNNER]: Failed to switch to a new proxy location, using Hotspot Shield CLI: {exc}")
+                    continue
+                    
+            print("[RUNNER]: Successfully connected to a new proxy location")
+
         location_sleep_time = timeout * randint(5,8)
         print(f"[RUNNER]: Sleeping for {location_sleep_time} seconds...")
         sleep(location_sleep_time)
@@ -225,11 +258,11 @@ def run(base_url, locations, max_pages, base_dir, hotspot_codes, timeout=5):
 
     print("[RUNNER]: Crawling successfully done!")
     print("[RUNNER]: Quitting the driver...")
-    print("[RUNNER]: Sleeping for {timeout} seconds...")
+    print(f"[RUNNER]: Sleeping for {timeout} seconds...")
     sleep(timeout)
     driver.quit()
 
 
 
 if __name__=='__main__':
-    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR, HOTSPOT_CODES)
+    run(BASE_URL, LOCATIONS, MAX_PAGES, BASE_DIR, HOTSPOT_CODES, VPN_BOOLEAN)
