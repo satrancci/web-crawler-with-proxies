@@ -13,7 +13,7 @@ bash install.sh
 #mv chromedriver $HOME/local/bin
 #echo "export PATH=$PATH:$HOME/local/bin" >> $HOME/.bash_profile
 
-##### Then run #####
+##### Then open a new terminal window and run #####
 # which chromedriver
 ##### and copy paste that path into run_selenium.py on the line starting with
 #####  driver=webdriver.Chrome(PASTE_THE_PATH_HERE, options=options) #####
