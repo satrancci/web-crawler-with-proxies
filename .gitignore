@@ -11,3 +11,16 @@ cookies.txt
 /crawled_routes
 /fetched_routes
 parsed_data.txt
+
+/utils
+hotspot_shield_codes.txt
+install_mac_os.sh
+install_linux.sh
+install.sh
+locations_to_crawl.txt
+LICENSE.txt
+requirements.txt
+run_curl.py
+run_parsing.py
+run_plotting.py
+run_selenium.py
